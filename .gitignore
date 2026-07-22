@@ -1,0 +1,15 @@
+﻿# 인증 정보
+config.php
+mail_config.php
+.env
+.env.*
+
+# Node.js
+node_modules/
+
+# 로그
+*.log
+
+# Windows
+Thumbs.db
+desktop.ini

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeaNus | 씨앤어스</title>
+<meta name="description" content="씨앤어스 - Create Business for the Future Values. 웹 개발, 연구개발, 국제 표준화, 온택트 이벤트">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:    #071629;
+  --navy-2:  #0D2240;
+  --navy-3:  #122a52;
+  --blue:    #0B5EA8;
+  --blue-lt: #1a75c9;
+  --teal:    #00B4C6;
+  --teal-lt: #33c8d8;
+  --white:   #FFFFFF;
+  --gray-1:  #F0F4F9;
+  --gray-2:  #CBD5E1;
+  --gray-3:  #64748B;
+  --text:    #1E293B;
+  --text-2:  #475569;
+  --r-sm:    6px;
+  --r-md:    12px;
+  --r-lg:    20px;
+  --trans:   0.25s ease;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  background: #fff;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; background: none; font: inherit; }
+
+/* ===== UTILITY ===== */
+.container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 100px 0; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 16px;
+}
+.section-label::before {
+  content: ''; display: block; width: 24px; height: 2px; background: var(--teal);
+}
+.section-title {
+  font-size: clamp(22px, 3.2vw, 34px); font-weight: 800; line-height: 1.2;
+  color: var(--text); margin-bottom: 16px;
+}
+.section-title.light { color: var(--white); }
+.section-desc {
+  font-size: 13px; color: var(--text-2); max-width: 540px; line-height: 1.8;
+}
+.section-desc.light { color: rgba(255,255,255,0.65); }
+
+/* ===== REVEAL ANIMATION ===== */
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ===== LANGUAGE (English only) ===== */
+[data-ko] { display: none; }
+
+/* ===== NAVIGATION ===== */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 24px;
+  transition: background var(--trans), box-shadow var(--trans);
+}
+#nav.scrolled {
+  background: rgba(7,22,41,0.97);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+}
+.nav-inner {
+  max-width: 1160px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 80px;
+}
+.nav-logo img { height: 36px; width: auto; }
+.nav-menu { display: flex; align-items: center; gap: 36px; list-style: none; }
+.nav-menu a {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.7);
+  transition: color var(--trans);
+}
+.nav-menu a:hover { color: var(--white); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-cta {
+  font-size: 13px; font-weight: 700;
+  color: var(--white); background: var(--blue);
+  padding: 8px 20px; border-radius: 6px;
+  transition: background var(--trans), transform var(--trans);
+}
+.nav-cta:hover { background: var(--blue-lt); transform: translateY(-1px); }
+.mobile-toggle { display: none; flex-direction: column; gap: 5px; padding: 8px; }
+.mobile-drawer { display: none; }
+.mobile-toggle span {
+  display: block; width: 22px; height: 2px; background: rgba(255,255,255,0.8);
+  transition: all var(--trans);
+}
+
+/* ===== HERO ===== */
+#hero {
+  position: relative; min-height: 100vh;
+  background: var(--navy);
+  display: flex; align-items: center;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(0,180,198,0.12) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.6;
+}
+.hero-glow {
+  position: absolute; top: -200px; right: -100px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(11,94,168,0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute; bottom: -150px; left: 10%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,180,198,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 2; padding-top: 120px; padding-bottom: 80px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(0,180,198,0.1); border: 1px solid rgba(0,180,198,0.25);
+  padding: 6px 16px; border-radius: 20px; margin-bottom: 32px;
+}
+.hero-badge::before {
+  content: ''; display: block; width: 6px; height: 6px;
+  background: var(--teal); border-radius: 50%;
+}
+.hero-title {
+  font-size: clamp(29px, 4.4vw, 58px); font-weight: 800; line-height: 1.1;
+  color: var(--white); margin-bottom: 24px;
+}
+.hero-title .accent { color: var(--teal); }
+.hero-title .line2 { color: rgba(255,255,255,0.55); }
+.hero-sub {
+  font-size: clamp(12px, 1.6vw, 14px); color: rgba(255,255,255,0.6);
+  max-width: 540px; line-height: 1.8; margin-bottom: 48px;
+}
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700;
+  color: var(--white); background: var(--blue);
+  padding: 14px 28px; border-radius: 8px;
+  transition: all var(--trans);
+}
+.btn-primary:hover { background: var(--blue-lt); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,94,168,0.4); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 14px 28px; border-radius: 8px;
+  transition: all var(--trans);
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+.hero-scroll {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.3); font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+}
+.scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%,100%{ opacity:0.3 } 50%{ opacity:1 } }
+
+
+/* ===== ABOUT ===== */
+#about { background: #fff; }
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.about-visual {
+  position: relative; border-radius: var(--r-lg);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-3) 100%);
+  padding: 48px; min-height: 400px;
+  display: flex; flex-direction: column; justify-content: center;
+  overflow: hidden;
+}
+.about-visual::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(0,180,198,0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.about-visual-content { position: relative; z-index: 1; }
+.about-logo { width: 140px; margin-bottom: 32px; filter: brightness(0) invert(1); }
+.about-tagline {
+  font-size: 14px; font-weight: 700; color: var(--white);
+  line-height: 1.5; margin-bottom: 24px;
+  border-left: 3px solid var(--teal); padding-left: 16px;
+}
+.about-reg {
+  font-size: 10px; color: rgba(255,255,255,0.35);
+  border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px;
+}
+.about-text .section-desc { margin-bottom: 32px; max-width: 100%; }
+.value-list { display: flex; flex-direction: column; gap: 20px; }
+.value-item { display: flex; gap: 16px; align-items: flex-start; }
+.value-icon {
+  width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+  background: var(--gray-1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.value-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.value-desc { font-size: 11px; color: var(--text-2); }
+
+/* ===== BUSINESS ===== */
+#business { background: var(--gray-1); }
+.business-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 56px;
+}
+.biz-card {
+  background: var(--white); border-radius: var(--r-md);
+  padding: 36px; position: relative; overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: transform var(--trans), box-shadow var(--trans);
+}
+.biz-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.10); }
+.biz-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.biz-card.c1::before { background: linear-gradient(90deg, var(--blue), var(--teal)); }
+.biz-card.c2::before { background: linear-gradient(90deg, #7C3AED, #0B5EA8); }
+.biz-card.c3::before { background: linear-gradient(90deg, #0B5EA8, #00B4C6); }
+.biz-card.c4::before { background: linear-gradient(90deg, #00B4C6, #10B981); }
+.biz-icon {
+  width: 52px; height: 52px; border-radius: 12px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: center; font-size: 19px;
+}
+.c1 .biz-icon { background: rgba(11,94,168,0.08); }
+.c2 .biz-icon { background: rgba(124,58,237,0.08); }
+.c3 .biz-icon { background: rgba(0,180,198,0.08); }
+.c4 .biz-icon { background: rgba(16,185,129,0.08); }
+.biz-card h3 { font-size: 14px; font-weight: 800; margin-bottom: 8px; }
+.biz-sub { font-size: 11px; color: var(--teal); font-weight: 600; margin-bottom: 16px; letter-spacing: 0.3px; }
+.biz-desc { font-size: 11px; color: var(--text-2); line-height: 1.8; }
+.biz-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.biz-tag {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.3px;
+  padding: 4px 10px; border-radius: 20px;
+  background: var(--gray-1); color: var(--gray-3);
+}
+
+/* ===== CLIENTS ===== */
+#clients { background: var(--gray-1); }
+.client-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 50px;
+}
+.client-card {
+  background: #fff; border-radius: var(--r-md);
+  border: 1px solid var(--gray-2); padding: 22px 24px;
+  transition: all var(--trans); cursor: default;
+}
+.client-card:hover {
+  border-color: rgba(0,180,198,0.5);
+  box-shadow: 0 4px 20px rgba(0,180,198,.1);
+  transform: translateY(-2px);
+}
+.client-type {
+  font-size: 8px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 10px;
+}
+.client-name {
+  font-size: 12px; font-weight: 800; color: var(--text);
+  line-height: 1.3; margin-bottom: 4px;
+}
+.client-name-en { font-size: 9px; color: var(--gray-3); line-height: 1.4; }
+
+/* ===== CONTACT ===== */
+#contact { background: var(--navy); }
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start;
+}
+.contact-info { padding-top: 8px; }
+.contact-info .section-desc { margin-bottom: 40px; }
+.contact-items { display: flex; flex-direction: column; gap: 24px; }
+.contact-item { display: flex; gap: 16px; align-items: flex-start; }
+.contact-item-icon {
+  width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.contact-item-label { font-size: 10px; color: rgba(255,255,255,0.4); margin-bottom: 2px; font-weight: 500; }
+.contact-item-value { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 600; }
+.contact-form {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-lg); padding: 40px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.6); margin-bottom: 8px;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%; padding: 12px 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r-sm);
+  color: var(--white); font: inherit; font-size: 11px;
+  outline: none; transition: border-color var(--trans);
+  resize: vertical;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: rgba(255,255,255,0.25); }
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus { border-color: var(--teal); }
+.form-group select option { background: var(--navy-2); }
+.form-submit {
+  width: 100%; padding: 14px;
+  background: var(--teal); color: var(--navy);
+  font-size: 12px; font-weight: 800; border-radius: 8px;
+  transition: all var(--trans);
+}
+.form-submit:hover { background: var(--teal-lt); transform: translateY(-1px); }
+
+/* ===== FOOTER ===== */
+#footer {
+  background: var(--navy-2);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 48px 24px;
+}
+.footer-inner {
+  max-width: 1160px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 32px;
+}
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.footer-logo img { height: 44px; width: auto; filter: brightness(0) invert(1); margin-bottom: 12px; }
+.footer-tagline { font-size: 11px; color: rgba(255,255,255,0.35); }
+.footer-nav { display: flex; gap: 40px; }
+.footer-nav-col h4 { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 12px; }
+.footer-nav-col a { display: block; font-size: 11px; color: rgba(255,255,255,0.55); margin-bottom: 8px; transition: color var(--trans); }
+.footer-nav-col a:hover { color: var(--teal); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; color: rgba(255,255,255,0.25);
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 960px) {
+  .about-grid { grid-template-columns: 1fr; gap: 48px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  .footer-top { flex-direction: column; gap: 32px; }
+}
+@media (max-width: 768px) {
+  .section { padding: 64px 0; }
+  .container { padding: 0 32px; }
+  #nav { padding: 0 20px; }
+
+  /* Nav: 햄버거만 남기고 전부 숨김 */
+  .nav-menu { display: none; }
+  .nav-right { display: none; }
+  .mobile-toggle { display: flex; }
+
+  /* Hero */
+  .hero-content { padding-top: 100px; padding-bottom: 60px; }
+  .hero-title { font-size: clamp(22px, 7.2vw, 34px); }
+  .hero-sub { font-size: 11px; margin-bottom: 32px; }
+  .btn-primary, .btn-ghost { font-size: 11px; padding: 12px 20px; }
+
+  /* Stats */
+  /* Sections */
+  .business-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-nav { flex-direction: column; gap: 24px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* Biz tags: 모바일에서 줄바꿈 */
+  .biz-tags { flex-wrap: wrap; gap: 6px; }
+
+  /* 발주처 그리드 모바일 */
+  .client-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 32px; }
+  .client-card { padding: 16px; }
+  .client-name { font-size: 11px; }
+  .client-name-en { font-size: 9px; }
+
+  /* Mobile nav drawer */
+  .mobile-drawer {
+    position: fixed; top: 80px; left: 0; right: 0; bottom: 0;
+    background: rgba(7,22,41,0.98); backdrop-filter: blur(16px);
+    z-index: 999; padding: 32px 24px;
+    display: none; flex-direction: column; gap: 8px;
+    transform: translateY(-10px); opacity: 0;
+    transition: all var(--trans);
+  }
+  .mobile-drawer.open {
+    display: flex; transform: translateY(0); opacity: 1;
+  }
+  .mobile-drawer a {
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.8);
+    padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: color var(--trans);
+  }
+  .mobile-drawer a:hover { color: var(--teal); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><img src="assets/images/seanus_logo_transparent.png" alt="SeaNus"></a>
+    <ul class="nav-menu">
+      <li><a href="#about" data-ko>소개</a><a href="#about" data-en>About</a></li>
+      <li><a href="#business" data-ko>사업분야</a><a href="#business" data-en>Business</a></li>
+      <li><a href="#clients" data-ko>발주처</a><a href="#clients" data-en>Clients</a></li>
+      <li><a href="#contact" data-ko>문의</a><a href="#contact" data-en>Contact</a></li>
+    </ul>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <a href="#about" data-ko onclick="closeDrawer()">소개</a>
+  <a href="#about" data-en onclick="closeDrawer()">About</a>
+  <a href="#business" data-ko onclick="closeDrawer()">사업분야</a>
+  <a href="#business" data-en onclick="closeDrawer()">Business</a>
+  <a href="#clients" data-ko onclick="closeDrawer()">발주처</a>
+  <a href="#clients" data-en onclick="closeDrawer()">Clients</a>
+  <a href="#contact" data-ko onclick="closeDrawer()">문의</a>
+  <a href="#contact" data-en onclick="closeDrawer()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+  <div class="container hero-content">
+    <div class="hero-badge" data-ko>씨앤어스 · SeaNus</div>
+    <div class="hero-badge" data-en>SeaNus · 씨앤어스</div>
+    <h1 class="hero-title">
+      <span data-ko>넓은 바다,<br><span class="accent">함께 성장</span>하는<br><span class="line2">당신의 동행</span></span>
+      <span data-en>The open sea,<br><span class="accent">growing together</span><br><span class="line2">your companion</span></span>
+    </h1>
+    <p class="hero-sub" data-ko>웹 개발부터 연구개발 컨설팅, 국제 표준화, 온택트 이벤트까지 — 고객 맞춤형 솔루션으로 비즈니스 성장을 지원합니다.</p>
+    <p class="hero-sub" data-en>From web development and R&D consulting to international standardization and untact events — we deliver customized solutions that drive your business forward.</p>
+    <div class="hero-actions">
+      <a href="#business" class="btn-primary">
+        <span data-ko>사업분야 보기</span><span data-en>Our Services</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#contact" class="btn-ghost">
+        <span data-ko>프로젝트 문의</span><span data-en>Start a Project</span>
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>SCROLL</span>
+  </div>
+</section>
+
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-visual-content">
+          <img src="assets/images/seanus_logo_transparent.png" alt="SeaNus" class="about-logo">
+          <div class="about-tagline" data-ko>"넓은 바다, 함께 성장하는<br>당신의 동행"</div>
+          <div class="about-tagline" data-en>"The open sea,<br>growing together as your companion"</div>
+          <div class="about-reg" data-ko>사업자등록번호 661-26-00464</div>
+          <div class="about-reg" data-en>Business Reg. No. 661-26-00464</div>
+        </div>
+      </div>
+      <div class="about-text reveal reveal-delay-1">
+        <div class="section-label" data-ko>회사 소개</div>
+        <div class="section-label" data-en>About SeaNus</div>
+        <h2 class="section-title" data-ko>고객과 함께 성장하는<br>기술 파트너</h2>
+        <h2 class="section-title" data-en>Your Trusted Technology<br>Partner</h2>
+        <p class="section-desc" data-ko>씨앤어스는 웹 기반 고객 맞춤 서비스 개발, 연구개발 용역·컨설팅, 국제 표준화 활동, 온택트 이벤트 운영을 핵심 사업으로 하는 종합 기술 솔루션 기업입니다.</p>
+        <p class="section-desc" data-en>SeaNus is a comprehensive technology solutions company specializing in web-based customized service development, R&D services and consulting, international standardization, and untact event management.</p>
+        <div class="value-list" style="margin-top: 32px;">
+          <div class="value-item">
+            <div class="value-icon">🎯</div>
+            <div>
+              <div class="value-title" data-ko>고객 맞춤 솔루션</div>
+              <div class="value-title" data-en>Customized Solutions</div>
+              <div class="value-desc" data-ko>고객의 비즈니스 목표에 최적화된 기술 솔루션을 제공합니다</div>
+              <div class="value-desc" data-en>We deliver technology solutions optimized for each client's business goals</div>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">🌐</div>
+            <div>
+              <div class="value-title" data-ko>글로벌 표준 전문성</div>
+              <div class="value-title" data-en>Global Standards Expertise</div>
+              <div class="value-desc" data-ko>IEC TC80, TTA 등 국제·국내 표준화 기관 활동을 통한 전문성 보유</div>
+              <div class="value-desc" data-en>Deep expertise through active participation in IEC TC80, TTA, and other standardization bodies</div>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">🚀</div>
+            <div>
+              <div class="value-title" data-ko>혁신적 이벤트 플랫폼</div>
+              <div class="value-title" data-en>Innovative Event Platform</div>
+              <div class="value-desc" data-ko>YouTube, Facebook 등 멀티채널 기반 온택트 이벤트 전문 운영</div>
+              <div class="value-desc" data-en>Professional untact event management across YouTube, Facebook, and multi-channel platforms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS -->
+<section id="business" class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label" data-ko>사업 분야</div>
+      <div class="section-label" data-en>Our Business</div>
+      <h2 class="section-title" data-ko>핵심 서비스 영역</h2>
+      <h2 class="section-title" data-en>Core Service Areas</h2>
+      <p class="section-desc" data-ko>고객의 다양한 니즈에 대응하는 4가지 핵심 서비스를 제공합니다</p>
+      <p class="section-desc" data-en>Four core services designed to meet your diverse business needs</p>
+    </div>
+    <div class="business-grid">
+      <!-- Card 1 -->
+      <div class="biz-card c1 reveal reveal-delay-1">
+        <div class="biz-icon">📡</div>
+        <h3 data-ko>컨퍼런스 · 세미나 · 전시회</h3>
+        <h3 data-en>Conference & Exhibition PCO</h3>
+        <div class="biz-sub" data-ko>웹 기반 행사 기획 · 개최 · 운영</div>
+        <div class="biz-sub" data-en>Web-based Event Planning & Operation</div>
+        <p class="biz-desc" data-ko>부산광역시, 해양수산부, 외교부 등 정부·공공기관의 웹 컨퍼런스·세미나·전시회를 기획부터 라이브 방송까지 원스톱으로 운영합니다. 북극협력주간, ICMASS, 부산해양콘퍼런스 등 20회 이상 수행 경험을 보유합니다.</p>
+        <p class="biz-desc" data-en>We provide end-to-end web conference, seminar, and exhibition services for government and public institutions — from planning and platform development to live broadcasting. Over 20 events delivered including Arctic Cooperation Week, ICMASS, and Busan Ocean Conference.</p>
+        <div class="biz-tags">
+          <span class="biz-tag">웹 PCO</span>
+          <span class="biz-tag">라이브 방송</span>
+          <span class="biz-tag">YouTube</span>
+          <span class="biz-tag">행사 기획</span>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="biz-card c2 reveal reveal-delay-2">
+        <div class="biz-icon">🔬</div>
+        <h3 data-ko>R&D 서비스 및 컨설팅</h3>
+        <h3 data-en>R&D Service & Consulting</h3>
+        <div class="biz-sub" data-ko>해양 · 자율운항 · 기술사업화 분야</div>
+        <div class="biz-sub" data-en>Maritime · Autonomous Vessel · Technology Commercialization</div>
+        <p class="biz-desc" data-ko>전자해도표시 솔루션, 어선용 통합항해 시스템(MFD), 자율운항선박 IEC 대응 등 해양 분야 R&D 용역을 수행합니다. 해외 선행특허 분석, 기술사업화 전략 수립 등 전문 컨설팅도 제공합니다.</p>
+        <p class="biz-desc" data-en>We deliver maritime R&D services including ECDIS solutions, integrated navigation systems (MFD), and autonomous vessel IEC response. We also provide expert consulting on prior patent analysis and technology commercialization strategies.</p>
+        <div class="biz-tags">
+          <span class="biz-tag">해양 R&D</span>
+          <span class="biz-tag">자율운항선박</span>
+          <span class="biz-tag">기술사업화</span>
+          <span class="biz-tag">특허분석</span>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="biz-card c3 reveal reveal-delay-1">
+        <div class="biz-icon">🌐</div>
+        <h3 data-ko>해양시스템 국제표준화</h3>
+        <h3 data-en>Marine System Standard Development</h3>
+        <div class="biz-sub" data-ko>IEC TC80K · IEC TC80 WG6/WG17</div>
+        <div class="biz-sub" data-en>IEC TC80K · IEC TC80 WG6/WG17</div>
+        <p class="biz-desc" data-ko>대표자가 IEC TC80K 및 IEC TC80 WG6·WG17 전문위원으로 직접 활동하며 해양 전자항법·자율운항 분야 국제표준 개발에 참여합니다. 기업의 IEC 표준 대응 전략 수립도 지원합니다.</p>
+        <p class="biz-desc" data-en>Our CEO serves as an expert delegate on IEC TC80K and IEC TC80 WG6/WG17, actively contributing to international standards in maritime electronics and autonomous navigation. We also support companies in developing IEC compliance strategies.</p>
+        <div class="biz-tags">
+          <span class="biz-tag">IEC TC80</span>
+          <span class="biz-tag">e-Navigation</span>
+          <span class="biz-tag">자율운항</span>
+          <span class="biz-tag">국제표준</span>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="biz-card c4 reveal reveal-delay-2">
+        <div class="biz-icon">💻</div>
+        <h3 data-ko>소프트웨어 · 클라우드 플랫폼</h3>
+        <h3 data-en>Software & Cloud Platform</h3>
+        <div class="biz-sub" data-ko>웹 플랫폼 · 클라우드 인프라 · 맞춤 개발</div>
+        <div class="biz-sub" data-en>Web Platform · Cloud Infrastructure · Custom Development</div>
+        <p class="biz-desc" data-ko>웹 기반 컨퍼런스 플랫폼, 온라인 전시회 시스템, 임상연구 플랫폼 등을 클라우드 환경으로 설계·구축합니다. AWS·Azure 기반 인프라 설계, 서버리스 아키텍처, SaaS형 서비스 운영까지 원스톱으로 제공하며 부산광역시, 경상국립대학교 등 공공기관 납품 실적을 보유합니다.</p>
+        <p class="biz-desc" data-en>We design and build cloud-native platforms including web conference systems, online exhibition platforms, and clinical research services. We deliver end-to-end solutions from AWS/Azure infrastructure design and serverless architecture to SaaS operations — with proven delivery to public institutions including Busan Metropolitan City and Gyeongsang National University.</p>
+        <div class="biz-tags">
+          <span class="biz-tag">AWS / Azure</span>
+          <span class="biz-tag">클라우드 인프라</span>
+          <span class="biz-tag">웹 플랫폼</span>
+          <span class="biz-tag">공공 SI</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section id="clients" class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label" data-ko>주요 실적</div>
+      <div class="section-label" data-en>Our Partners</div>
+      <h2 class="section-title" data-ko>함께한 발주처</h2>
+      <h2 class="section-title" data-en>Trusted By</h2>
+      <p class="section-desc" data-ko>정부기관, 연구기관, 대학교 등 다양한 파트너와 협력해왔습니다</p>
+      <p class="section-desc" data-en>We have partnered with government agencies, research institutions, and universities</p>
+    </div>
+    <div class="client-grid reveal">
+      <div class="client-card">
+        <div class="client-type" data-ko>정부기관</div>
+        <div class="client-type" data-en>Government</div>
+        <div class="client-name">부산광역시</div>
+        <div class="client-name-en">Busan Metropolitan City</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>정부기관</div>
+        <div class="client-type" data-en>Government</div>
+        <div class="client-name">해양수산부</div>
+        <div class="client-name-en">Ministry of Oceans &amp; Fisheries</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>정부기관</div>
+        <div class="client-type" data-en>Government</div>
+        <div class="client-name">외교부</div>
+        <div class="client-name-en">Ministry of Foreign Affairs</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>연구기관</div>
+        <div class="client-type" data-en>Research</div>
+        <div class="client-name">한국해양수산개발원</div>
+        <div class="client-name-en">Korea Maritime Institute (KMI)</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>국제표준</div>
+        <div class="client-type" data-en>Intl. Standard</div>
+        <div class="client-name">IEC TC80</div>
+        <div class="client-name-en">Intl. Electrotechnical Commission</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>학술기관</div>
+        <div class="client-type" data-en>Academia</div>
+        <div class="client-name">한국해양대학교</div>
+        <div class="client-name-en">Korea Maritime University</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>학술기관</div>
+        <div class="client-type" data-en>Academia</div>
+        <div class="client-name">경상국립대학교</div>
+        <div class="client-name-en">Gyeongsang National University</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>언론·미디어</div>
+        <div class="client-type" data-en>Media</div>
+        <div class="client-name">국제신문</div>
+        <div class="client-name-en">Kukje Daily News</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>언론·미디어</div>
+        <div class="client-type" data-en>Media</div>
+        <div class="client-name">KNN</div>
+        <div class="client-name-en">Korea New Network</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="section-label" style="color: var(--teal);" data-ko>문의하기</div>
+        <div class="section-label" style="color: var(--teal);" data-en>Contact Us</div>
+        <h2 class="section-title light" data-ko>프로젝트를<br>함께 시작해요</h2>
+        <h2 class="section-title light" data-en>Let's Start<br>a Project Together</h2>
+        <p class="section-desc light" data-ko>비즈니스 목표 달성을 위한 최적의 솔루션을 제안해드립니다. 지금 문의해 주세요.</p>
+        <p class="section-desc light" data-en>We'll propose the optimal solution to achieve your business goals. Contact us today.</p>
+        <div class="contact-items" style="margin-top: 40px;">
+          <div class="contact-item">
+            <div class="contact-item-icon">📞</div>
+            <div>
+              <div class="contact-item-label" data-ko>전화 문의</div>
+              <div class="contact-item-label" data-en>Phone</div>
+              <div class="contact-item-value">+82-51-717-2466</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">🖨️</div>
+            <div>
+              <div class="contact-item-label">FAX</div>
+              <div class="contact-item-value">+82-50-7594-8191</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">🌐</div>
+            <div>
+              <div class="contact-item-label" data-ko>웹사이트</div>
+              <div class="contact-item-label" data-en>Website</div>
+              <div class="contact-item-value">forseanus.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal reveal-delay-2">
+        <form onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label data-ko>이름 *</label>
+              <label data-en>Name *</label>
+              <input type="text" name="name" required placeholder="홍길동 / John Doe">
+            </div>
+            <div class="form-group">
+              <label data-ko>이메일 *</label>
+              <label data-en>Email *</label>
+              <input type="email" name="email" required placeholder="email@example.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-ko>연락처</label>
+            <label data-en>Phone</label>
+            <input type="tel" name="phone" placeholder="010-0000-0000">
+          </div>
+          <div class="form-group">
+            <label data-ko>문의 유형</label>
+            <label data-en>Inquiry Type</label>
+            <select name="type">
+              <option value="" data-ko>선택해주세요</option>
+              <option value="" data-en>Please select</option>
+              <option data-ko>웹 개발 문의</option>
+              <option data-en>Web Development</option>
+              <option data-ko>R&D 컨설팅</option>
+              <option data-en>R&D Consulting</option>
+              <option data-ko>표준 개발 협력</option>
+              <option data-en>Standardization Collaboration</option>
+              <option data-ko>온택트 이벤트</option>
+              <option data-en>Untact Event</option>
+              <option data-ko>기타</option>
+              <option data-en>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ko>문의 내용 *</label>
+            <label data-en>Message *</label>
+            <textarea name="message" rows="5" required
+              data-ko-ph="프로젝트 내용, 요구사항, 예산 등을 자유롭게 작성해 주세요."
+              data-en-ph="Please describe your project, requirements, budget, etc."></textarea>
+          </div>
+          <button type="submit" class="form-submit">
+            <span data-ko>문의 보내기</span>
+            <span data-en>Send Inquiry</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-logo">
+        <img src="assets/images/seanus_logo_transparent.png" alt="SeaNus">
+        <div class="footer-tagline">Create Business for the Future Values</div>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-nav-col">
+          <h4 data-ko>서비스</h4>
+          <h4 data-en>Services</h4>
+          <a href="#business" data-ko>웹 개발</a>
+          <a href="#business" data-en>Web Development</a>
+          <a href="#business" data-ko>R&D 컨설팅</a>
+          <a href="#business" data-en>R&D Consulting</a>
+          <a href="#business" data-ko>표준 개발</a>
+          <a href="#business" data-en>Standardization</a>
+          <a href="#business" data-ko>온택트 이벤트</a>
+          <a href="#business" data-en>Untact Events</a>
+        </div>
+        <div class="footer-nav-col">
+          <h4 data-ko>회사</h4>
+          <h4 data-en>Company</h4>
+          <a href="#about" data-ko>소개</a>
+          <a href="#about" data-en>About Us</a>
+          <a href="#clients" data-ko>발주처</a>
+          <a href="#clients" data-en>Clients</a>
+          <a href="#contact" data-ko>문의</a>
+          <a href="#contact" data-en>Contact</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <div data-ko>© 2024 씨앤어스(SeaNus). All rights reserved. 사업자등록번호 661-26-00464</div>
+      <div data-en>© 2024 SeaNus. All rights reserved. Business Reg. No. 661-26-00464</div>
+      <div>Tel: +82-51-717-2466 · FAX: +82-50-7594-8191</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+/* ===== NAV SCROLL ===== */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+nav.classList.toggle('scrolled', window.scrollY > 40);
+
+/* ===== MOBILE NAV ===== */
+const toggle = document.getElementById('mobileToggle');
+const drawer = document.getElementById('mobileDrawer');
+let drawerOpen = false;
+toggle.addEventListener('click', () => {
+  drawerOpen = !drawerOpen;
+  drawer.classList.toggle('open', drawerOpen);
+});
+function closeDrawer() {
+  drawerOpen = false;
+  drawer.classList.remove('open');
+}
+
+/* ===== SCROLL REVEAL ===== */
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+revealEls.forEach(el => observer.observe(el));
+
+/* ===== SMOOTH NAV LINKS ===== */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    const top = target.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+});
+
+/* ===== CONTACT FORM ===== */
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.form-submit');
+  btn.textContent = currentLang === 'ko' ? '전송 중...' : 'Sending...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = currentLang === 'ko' ? '감사합니다! 빠른 시일 내 연락드리겠습니다.' : 'Thank you! We will contact you soon.';
+    e.target.reset();
+    setTimeout(() => {
+      btn.innerHTML = currentLang === 'ko'
+        ? '<span data-ko>문의 보내기</span><span data-en style="display:none">Send Inquiry</span>'
+        : '<span data-ko style="display:none">문의 보내기</span><span data-en>Send Inquiry</span>';
+      btn.disabled = false;
+    }, 4000);
+  }, 1200);
+}
+</script>
+</body>
+</html>
