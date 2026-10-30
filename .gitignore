@@ -13,3 +13,6 @@ node_modules/
 # Windows
 Thumbs.db
 desktop.ini
+
+# 가비아 구 사이트 백업 (DB 덤프 포함, 공개 저장소에 올리지 않음)
+가비아 백업/
