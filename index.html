@@ -296,6 +296,57 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 }
 .client-name-en { font-size: 9px; color: var(--gray-3); line-height: 1.4; }
 
+/* ===== PORTFOLIO ===== */
+#portfolio { background: var(--white); }
+.pf-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+.pf-featured { display: flex; flex-direction: column; gap: 56px; margin-top: 56px; }
+.pf-feature {
+  display: grid; grid-template-columns: 1.35fr 1fr; gap: 48px; align-items: center;
+}
+.pf-feature.flip { grid-template-columns: 1fr 1.35fr; }
+.pf-feature.flip .pf-shot { order: 2; }
+.pf-shot {
+  display: block; position: relative; overflow: hidden;
+  border-radius: var(--r-md); border: 1px solid #E2E8F0;
+  background: var(--gray-1); aspect-ratio: 16 / 10;
+  transition: transform var(--trans), box-shadow var(--trans);
+}
+.pf-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+.pf-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 12px;
+}
+.pf-meta .pf-year { color: var(--gray-3); }
+.pf-feature h3 { font-size: 18px; font-weight: 800; line-height: 1.35; margin-bottom: 6px; }
+.pf-client { font-size: 11px; color: var(--gray-3); font-weight: 600; margin-bottom: 18px; }
+.pf-desc { font-size: 11px; color: var(--text-2); line-height: 1.8; }
+.pf-points { list-style: none; margin: 18px 0 0; padding: 0; border-left: 3px solid var(--teal); }
+.pf-points li { font-size: 11px; color: var(--text); padding: 3px 0 3px 14px; }
+.pf-stack { font-size: 10px; color: var(--gray-3); margin-top: 18px; }
+.pf-link {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 20px;
+  font-size: 11px; font-weight: 700; color: var(--blue);
+  border-bottom: 1px solid rgba(11,94,168,.3); padding-bottom: 2px;
+  transition: color var(--trans), border-color var(--trans);
+}
+.pf-link:hover { color: var(--teal); border-color: var(--teal); }
+.pf-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 32px 24px;
+  margin-top: 72px; padding-top: 56px; border-top: 1px solid #E2E8F0;
+}
+.pf-item { grid-column: span 2; }
+.pf-item.wide { grid-column: span 3; }
+.pf-item .pf-shot { margin-bottom: 18px; }
+.pf-item h4 { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+.pf-item .pf-client { margin-bottom: 10px; }
+.pf-badge {
+  display: inline-block; font-size: 9px; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px;
+  background: var(--gray-1); color: var(--gray-3); margin-top: 12px;
+}
+
 /* ===== CONTACT ===== */
 #contact { background: var(--navy); }
 .contact-grid {
@@ -378,6 +429,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 @media (max-width: 960px) {
   .about-grid { grid-template-columns: 1fr; gap: 48px; }
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  .pf-feature, .pf-feature.flip { gap: 32px; }
   .footer-top { flex-direction: column; gap: 32px; }
 }
 @media (max-width: 768px) {
@@ -405,6 +457,15 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 
   /* Biz tags: 모바일에서 줄바꿈 */
   .biz-tags { flex-wrap: wrap; gap: 6px; }
+
+  /* 포트폴리오 모바일 */
+  .pf-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .pf-featured { gap: 40px; margin-top: 40px; }
+  .pf-feature, .pf-feature.flip { grid-template-columns: 1fr; gap: 20px; }
+  .pf-feature.flip .pf-shot { order: 0; }
+  .pf-feature h3 { font-size: 15px; }
+  .pf-grid { grid-template-columns: 1fr; gap: 40px; margin-top: 48px; padding-top: 40px; }
+  .pf-item, .pf-item.wide { grid-column: auto; }
 
   /* 발주처 그리드 모바일 */
   .client-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 32px; }
@@ -442,6 +503,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     <ul class="nav-menu">
       <li><a href="#about" data-ko>소개</a><a href="#about" data-en>About</a></li>
       <li><a href="#business" data-ko>사업분야</a><a href="#business" data-en>Business</a></li>
+      <li><a href="#portfolio" data-ko>포트폴리오</a><a href="#portfolio" data-en>Portfolio</a></li>
       <li><a href="#clients" data-ko>발주처</a><a href="#clients" data-en>Clients</a></li>
       <li><a href="#contact" data-ko>문의</a><a href="#contact" data-en>Contact</a></li>
     </ul>
@@ -457,6 +519,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   <a href="#about" data-en onclick="closeDrawer()">About</a>
   <a href="#business" data-ko onclick="closeDrawer()">사업분야</a>
   <a href="#business" data-en onclick="closeDrawer()">Business</a>
+  <a href="#portfolio" data-ko onclick="closeDrawer()">포트폴리오</a>
+  <a href="#portfolio" data-en onclick="closeDrawer()">Portfolio</a>
   <a href="#clients" data-ko onclick="closeDrawer()">발주처</a>
   <a href="#clients" data-en onclick="closeDrawer()">Clients</a>
   <a href="#contact" data-ko onclick="closeDrawer()">문의</a>
@@ -629,6 +693,140 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 </section>
 
 <!-- CLIENTS -->
+<!-- PORTFOLIO -->
+<section id="portfolio" class="section">
+  <div class="container">
+    <div class="pf-head reveal">
+      <div>
+        <div class="section-label" data-ko>포트폴리오</div>
+        <div class="section-label" data-en>Portfolio</div>
+        <h2 class="section-title" data-ko>직접 기획하고<br>구축한 웹사이트</h2>
+        <h2 class="section-title" data-en>Websites We Planned<br>and Built</h2>
+        <p class="section-desc" data-ko>국제 컨퍼런스, 공공 박람회, 지역 축제부터 해양 기업 홈페이지까지 — 기획·디자인·개발·운영을 직접 수행한 프로젝트입니다.</p>
+        <p class="section-desc" data-en>From international conferences, public job fairs and local festivals to maritime corporate websites — projects we planned, designed, developed and operate ourselves.</p>
+      </div>
+    </div>
+
+    <div class="pf-featured">
+      <!-- Featured 1 -->
+      <article class="pf-feature reveal">
+        <a class="pf-shot" href="https://ie-um.kr/" target="_blank" rel="noopener">
+          <img src="assets/images/portfolio/ieum.webp" alt="2026 부울경 광역이음 일자리 박람회 웹사이트" loading="lazy">
+        </a>
+        <div>
+          <div class="pf-meta"><span data-ko>행사 · 박람회</span><span data-en>Event · Job Fair</span><span class="pf-year">2026</span></div>
+          <h3 data-ko>2026 부울경 광역이음 일자리 박람회</h3>
+          <h3 data-en>2026 Busan-Ulsan-Gyeongnam Job Fair</h3>
+          <div class="pf-client" data-ko>부산경제진흥원(BEPA)</div>
+          <div class="pf-client" data-en>Busan Economic Promotion Agency (BEPA)</div>
+          <p class="pf-desc" data-ko>벡스코에서 열린 부울경 광역 일자리 박람회의 공식 웹사이트. 행사 소개, 프로그램 안내부터 참여기업 정보까지 오픈 이후 운영 단계에서도 지속적으로 업데이트했습니다.</p>
+          <p class="pf-desc" data-en>Official website for the regional job fair held at BEXCO. Beyond launch, we continuously updated event information, programs and participating companies throughout the operation period.</p>
+          <ul class="pf-points">
+            <li data-ko>참여기업 60여 곳의 채용정보 검색·필터·상세 보기</li>
+            <li data-en>Searchable, filterable listings for 60+ participating companies</li>
+            <li data-ko>발주처가 직접 입력하는 관리자 CMS</li>
+            <li data-en>Admin CMS for the client to manage content directly</li>
+          </ul>
+          <div class="pf-stack">PHP · MySQL · Responsive</div>
+          <a class="pf-link" href="https://ie-um.kr/" target="_blank" rel="noopener">ie-um.kr ↗</a>
+        </div>
+      </article>
+
+      <!-- Featured 2 -->
+      <article class="pf-feature flip reveal">
+        <a class="pf-shot" href="https://gorckorea.org/" target="_blank" rel="noopener">
+          <img src="assets/images/portfolio/gorc.webp" alt="GORC 글로벌오션레짐콘퍼런스 웹사이트" loading="lazy">
+        </a>
+        <div>
+          <div class="pf-meta"><span data-ko>국제 컨퍼런스</span><span data-en>Intl. Conference</span><span class="pf-year">2026</span></div>
+          <h3>GORC — Global Ocean Regime Conference</h3>
+          <div class="pf-client" data-ko>해양수산부 · 한국해양수산개발원(KMI)</div>
+          <div class="pf-client" data-en>Ministry of Oceans &amp; Fisheries · KMI</div>
+          <p class="pf-desc" data-ko>글로벌오션레짐콘퍼런스 공식 포털 리뉴얼. 오래된 그누보드 기반 사이트를 정리하고, 실제 쓰는 기능만 남긴 가벼운 구조로 새로 구축했습니다.</p>
+          <p class="pf-desc" data-en>Renewal of the official conference portal. We replaced a heavy legacy Gnuboard site with a lightweight custom build that keeps only the features actually in use.</p>
+          <ul class="pf-points">
+            <li data-ko>기존 회원 데이터 이관 및 사전등록·문의 관리</li>
+            <li data-en>Member data migration, registration and inquiry management</li>
+            <li data-ko>권한별 관리자 계정 분리</li>
+            <li data-en>Role-based admin accounts</li>
+          </ul>
+          <div class="pf-stack">PHP · MySQL · Legacy Migration</div>
+          <a class="pf-link" href="https://gorckorea.org/" target="_blank" rel="noopener">gorckorea.org ↗</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="pf-grid">
+      <article class="pf-item reveal">
+        <a class="pf-shot" href="https://www.icmass-conf.org/" target="_blank" rel="noopener">
+          <img src="assets/images/portfolio/icmass.webp" alt="ICMASS 2027 KOREA 웹사이트" loading="lazy">
+        </a>
+        <div class="pf-meta"><span data-ko>국제 학술대회</span><span data-en>Intl. Conference</span><span class="pf-year">2026</span></div>
+        <h4>ICMASS 2027 KOREA</h4>
+        <div class="pf-client" data-ko>자율운항선박 국제학술대회</div>
+        <div class="pf-client" data-en>Intl. Conference on Maritime Autonomous Surface Ships</div>
+        <p class="pf-desc" data-ko>국문·영문 학술대회 사이트와 연사·후원사·등록자 관리자 페이지를 구축했습니다.</p>
+        <p class="pf-desc" data-en>Bilingual conference site with an admin panel for speakers, sponsors and registrants.</p>
+        <a class="pf-link" href="https://www.icmass-conf.org/" target="_blank" rel="noopener">icmass-conf.org ↗</a>
+      </article>
+
+      <article class="pf-item reveal reveal-delay-1">
+        <a class="pf-shot" href="https://xn--b02b03xgtaw6l.kr/dadaepo/" target="_blank" rel="noopener">
+          <img src="assets/images/portfolio/dadaepo.webp" alt="2026 다대포 맥주축제 웹사이트" loading="lazy">
+        </a>
+        <div class="pf-meta"><span data-ko>지역 축제</span><span data-en>Festival</span><span class="pf-year">2026</span></div>
+        <h4 data-ko>2026 다대포 맥주축제</h4>
+        <h4 data-en>Dadaepo Beer Festival 2026</h4>
+        <div class="pf-client" data-ko>HBS한아방송(주)</div>
+        <div class="pf-client" data-en>HBS Hana Broadcasting</div>
+        <p class="pf-desc" data-ko>축제 안내, 라인업, 오시는 길과 온라인 예매를 하나로 연결한 공식 홈페이지입니다.</p>
+        <p class="pf-desc" data-en>Official festival site connecting event info, line-up, directions and online ticketing.</p>
+        <a class="pf-link" href="https://xn--b02b03xgtaw6l.kr/dadaepo/" target="_blank" rel="noopener">맥주축제.kr ↗</a>
+      </article>
+
+      <article class="pf-item reveal reveal-delay-2">
+        <div class="pf-shot">
+          <img src="assets/images/portfolio/hanha.webp" alt="HBS 한아방송 기업 홈페이지" loading="lazy">
+        </div>
+        <div class="pf-meta"><span data-ko>기업 홈페이지</span><span data-en>Corporate</span></div>
+        <h4 data-ko>HBS 한아방송</h4>
+        <h4 data-en>HBS Hana Broadcasting</h4>
+        <div class="pf-client" data-ko>방송 · 이벤트 전문기업</div>
+        <div class="pf-client" data-en>Broadcasting &amp; Event Company</div>
+        <p class="pf-desc" data-ko>행사 기획·운영·제작 역량과 실적을 보여주는 기업 홈페이지입니다.</p>
+        <p class="pf-desc" data-en>Corporate website presenting event planning, operation and production capabilities.</p>
+        <span class="pf-badge"><span data-ko>시안 이미지</span><span data-en>Design preview</span></span>
+      </article>
+
+      <article class="pf-item wide reveal">
+        <div class="pf-shot">
+          <img src="assets/images/portfolio/cpkorea.webp" alt="C&amp;P Korea 기업 홈페이지" loading="lazy">
+        </div>
+        <div class="pf-meta"><span data-ko>기업 홈페이지</span><span data-en>Corporate</span></div>
+        <h4>C&amp;P Korea</h4>
+        <div class="pf-client" data-ko>해양 전자장비 · 시스템 통합</div>
+        <div class="pf-client" data-en>Marine Electronics &amp; System Integration</div>
+        <p class="pf-desc" data-ko>NAVTOR 공식 딜러인 해양 전자장비 기업의 국·영문 홈페이지와 제품 카탈로그를 제작했습니다.</p>
+        <p class="pf-desc" data-en>Bilingual corporate website and product catalogue for an official NAVTOR dealer in marine electronics.</p>
+        <span class="pf-badge"><span data-ko>시안 이미지</span><span data-en>Design preview</span></span>
+      </article>
+
+      <article class="pf-item wide reveal reveal-delay-1">
+        <div class="pf-shot">
+          <img src="assets/images/portfolio/marincore.webp" alt="Marine Core 기업 홈페이지" loading="lazy">
+        </div>
+        <div class="pf-meta"><span data-ko>기업 홈페이지</span><span data-en>Corporate</span></div>
+        <h4>Marine Core</h4>
+        <div class="pf-client" data-ko>선박 기술 서비스 · 부품 공급</div>
+        <div class="pf-client" data-en>Marine Technical Services &amp; Supply</div>
+        <p class="pf-desc" data-ko>ISO 9001 인증 해양 기술 서비스 기업의 홈페이지와 웹 카탈로그를 제작했습니다.</p>
+        <p class="pf-desc" data-en>Corporate website and web catalogue for an ISO 9001-certified marine technical service company.</p>
+        <span class="pf-badge"><span data-ko>시안 이미지</span><span data-en>Design preview</span></span>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section id="clients" class="section">
   <div class="container">
     <div class="reveal">
@@ -815,6 +1013,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
           <h4 data-en>Company</h4>
           <a href="#about" data-ko>소개</a>
           <a href="#about" data-en>About Us</a>
+          <a href="#portfolio" data-ko>포트폴리오</a>
+          <a href="#portfolio" data-en>Portfolio</a>
           <a href="#clients" data-ko>발주처</a>
           <a href="#clients" data-en>Clients</a>
           <a href="#contact" data-ko>문의</a>
