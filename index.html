@@ -299,26 +299,38 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 /* ===== PORTFOLIO ===== */
 #portfolio { background: var(--white); }
 .pf-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
-.pf-featured { display: flex; flex-direction: column; gap: 56px; margin-top: 56px; }
-.pf-feature {
-  display: grid; grid-template-columns: 1.35fr 1fr; gap: 48px; align-items: center;
-}
-.pf-feature.flip { grid-template-columns: 1fr 1.35fr; }
-.pf-feature.flip .pf-shot { order: 2; }
+.pf-featured { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 56px; }
+.pf-device { position: relative; padding: 0 8% 32px 0; margin-bottom: 24px; }
 .pf-shot {
   display: block; position: relative; overflow: hidden;
   border-radius: var(--r-md); border: 1px solid #E2E8F0;
   background: var(--gray-1); aspect-ratio: 16 / 10;
+  padding-top: 22px;
   transition: transform var(--trans), box-shadow var(--trans);
+}
+.pf-shot::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 22px;
+  background-color: #F1F5F9; border-bottom: 1px solid #E2E8F0;
+  background-image:
+    radial-gradient(circle at 14px 11px, #CBD5E1 3px, transparent 3.5px),
+    radial-gradient(circle at 26px 11px, #CBD5E1 3px, transparent 3.5px),
+    radial-gradient(circle at 38px 11px, #CBD5E1 3px, transparent 3.5px);
 }
 .pf-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+.pf-phone {
+  position: absolute; right: 0; bottom: 0; width: 24%;
+  aspect-ratio: 390 / 844; overflow: hidden;
+  border: 5px solid #0F172A; border-radius: 18px; background: #fff;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08); pointer-events: none;
+}
+.pf-phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .pf-meta {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px;
   font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--teal); margin-bottom: 12px;
 }
-.pf-feature h3 { font-size: 18px; font-weight: 800; line-height: 1.35; margin-bottom: 6px; }
+.pf-feature h3 { font-size: 16px; font-weight: 800; line-height: 1.35; margin-bottom: 6px; }
 .pf-client { font-size: 11px; color: var(--gray-3); font-weight: 600; }
 .pf-stack { font-size: 10px; color: var(--gray-3); margin-top: 18px; padding-left: 12px; border-left: 3px solid var(--teal); }
 .pf-link {
@@ -423,7 +435,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 @media (max-width: 960px) {
   .about-grid { grid-template-columns: 1fr; gap: 48px; }
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
-  .pf-feature, .pf-feature.flip { gap: 32px; }
+  .pf-featured { gap: 28px; }
   .footer-top { flex-direction: column; gap: 32px; }
 }
 @media (max-width: 768px) {
@@ -454,9 +466,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
   /* 포트폴리오 모바일 */
   .pf-head { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .pf-featured { gap: 40px; margin-top: 40px; }
-  .pf-feature, .pf-feature.flip { grid-template-columns: 1fr; gap: 20px; }
-  .pf-feature.flip .pf-shot { order: 0; }
+  .pf-featured { grid-template-columns: 1fr; gap: 48px; margin-top: 40px; }
   .pf-feature h3 { font-size: 15px; }
   .pf-grid { grid-template-columns: 1fr; gap: 40px; margin-top: 48px; padding-top: 40px; }
   .pf-item { grid-column: auto; }
@@ -703,9 +713,12 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
     <div class="pf-featured">
       <article class="pf-feature reveal">
-        <a class="pf-shot" href="https://ie-um.kr/" target="_blank" rel="noopener">
-          <img src="assets/images/portfolio/ieum.webp" alt="2026 부울경 광역이음 일자리 박람회 웹사이트" loading="lazy">
-        </a>
+        <div class="pf-device">
+          <a class="pf-shot" href="https://ie-um.kr/" target="_blank" rel="noopener">
+            <img src="assets/images/portfolio/ieum.webp" alt="2026 부울경 광역이음 일자리 박람회 웹사이트" loading="lazy">
+          </a>
+          <div class="pf-phone"><img src="assets/images/portfolio/ieum_m.webp" alt="2026 부울경 광역이음 일자리 박람회 웹사이트 모바일 화면" loading="lazy"></div>
+        </div>
         <div>
           <div class="pf-meta"><span data-ko>행사 · 박람회</span><span data-en>Event · Job Fair</span></div>
           <h3 data-ko>2026 부울경 광역이음 일자리 박람회</h3>
@@ -717,10 +730,13 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
         </div>
       </article>
 
-      <article class="pf-feature flip reveal">
-        <a class="pf-shot" href="https://gorckorea.org/" target="_blank" rel="noopener">
-          <img src="assets/images/portfolio/gorc.webp" alt="GORC 글로벌오션레짐콘퍼런스 웹사이트" loading="lazy">
-        </a>
+      <article class="pf-feature reveal reveal-delay-1">
+        <div class="pf-device">
+          <a class="pf-shot" href="https://gorckorea.org/" target="_blank" rel="noopener">
+            <img src="assets/images/portfolio/gorc.webp" alt="GORC 글로벌오션레짐콘퍼런스 웹사이트" loading="lazy">
+          </a>
+          <div class="pf-phone"><img src="assets/images/portfolio/gorc_m.webp" alt="GORC 글로벌오션레짐콘퍼런스 웹사이트 모바일 화면" loading="lazy"></div>
+        </div>
         <div>
           <div class="pf-meta"><span data-ko>국제 컨퍼런스</span><span data-en>Intl. Conference</span></div>
           <h3>GORC — Global Ocean Regime Conference</h3>
@@ -851,6 +867,12 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
         <div class="client-type" data-en>Academia</div>
         <div class="client-name">한국해양대학교</div>
         <div class="client-name-en">Korea Maritime University</div>
+      </div>
+      <div class="client-card">
+        <div class="client-type" data-ko>학술기관</div>
+        <div class="client-type" data-en>Academia</div>
+        <div class="client-name">목포해양대학교</div>
+        <div class="client-name-en">Mokpo National Maritime University</div>
       </div>
       <div class="client-card">
         <div class="client-type" data-ko>학술기관</div>
