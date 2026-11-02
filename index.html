@@ -339,6 +339,9 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   transition: object-position 1.2s cubic-bezier(.4,0,.2,1);
 }
 /* 마우스를 올리면 사이트 전체 화면이 천천히 스크롤 (속도는 페이지 길이에 비례, JS에서 --pf-dur 지정) */
+@media (hover: none) {
+  .pf-shot.pf-auto img { object-position: 50% 100%; transition-duration: var(--pf-dur, 6s); transition-timing-function: linear; }
+}
 @media (hover: hover) {
   .pf-shot:hover img { object-position: 50% 100%; transition-duration: var(--pf-dur, 6s); transition-timing-function: linear; }
 }
@@ -479,7 +482,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
   /* Hero */
   .hero-content { padding-top: 100px; padding-bottom: 60px; }
-  .hero-mark { height: 60vh; right: -38%; color: rgba(0,180,198,0.12); }
+  .hero-mark { height: 62vh; right: -26%; color: rgba(0,180,198,0.24); }
   .hero-title { font-size: clamp(22px, 7.2vw, 34px); }
   .hero-sub { font-size: 11px; margin-bottom: 32px; }
   .btn-primary, .btn-ghost { font-size: 11px; padding: 12px 20px; }
@@ -1197,6 +1200,31 @@ function closeDrawer() {
   });
   hero.addEventListener('mouseleave', () => { tx = 0; ty = 0; kick(); });
 })();
+
+/* ===== TOUCH DEVICES: 마우스 효과를 스크롤 반응으로 대체 ===== */
+if (window.matchMedia('(hover: none)').matches) {
+  // 포트폴리오 카드가 화면 가운데 띠에 들어오면 사이트 화면 자동 스크롤
+  const pfObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => e.target.classList.toggle('pf-auto', e.isIntersecting));
+  }, { rootMargin: '-38% 0px -38% 0px' });
+  document.querySelectorAll('#portfolio .pf-shot').forEach(el => pfObserver.observe(el));
+
+  // S 심볼: 스크롤보다 느리게 움직여 깊이감
+  const mark = document.querySelector('.hero-mark');
+  if (mark) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY, window.innerHeight);
+        mark.style.setProperty('--my', (y * 0.35).toFixed(1) + 'px');
+        mark.style.setProperty('--mx', (-y * 0.08).toFixed(1) + 'px');
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+}
 
 /* ===== PORTFOLIO HOVER SCROLL SPEED (긴 페이지일수록 천천히) ===== */
 document.querySelectorAll('.pf-shot img').forEach(img => {
