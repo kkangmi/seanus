@@ -156,6 +156,49 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 @keyframes markDraw { to { stroke-dashoffset: 0; } }
 @keyframes markFadeIn { to { opacity: 1; } }
 @keyframes markTrace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* ===== 히어로 등장 연출: 제목은 줄마다 마스크 안에서 밀려 올라오고, 강조 문구에 빛이 한 번 스침 (1회성) ===== */
+.hero-title .ln { display: block; overflow: hidden; padding-bottom: .1em; margin-bottom: -.1em; }
+.hero-title .ln > span { display: inline-block; transform: translateY(110%); animation: lnUp .95s cubic-bezier(.2,.8,.2,1) forwards; }
+.hero-title .ln:nth-child(1) > span { animation-delay: .15s; }
+.hero-title .ln:nth-child(2) > span { animation-delay: .28s; }
+.hero-title .ln:nth-child(3) > span { animation-delay: .41s; }
+@keyframes lnUp { to { transform: translateY(0); } }
+.hero-title .accent {
+  background: linear-gradient(100deg, var(--teal) 0 42%, #E0FCFF 50%, var(--teal) 58% 100%);
+  background-size: 260% 100%; background-position: 100% 0;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: accentShine 1.5s cubic-bezier(.4,0,.2,1) 1.25s forwards;
+}
+@keyframes accentShine { to { background-position: 0 0; } }
+.hero-badge, .hero-sub, .hero-actions { animation: heroIn .8s ease both; }
+.hero-badge { animation-delay: .05s; }
+.hero-sub { animation-delay: .6s; }
+.hero-actions { animation-delay: .75s; }
+@keyframes heroIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* ===== 카드 테두리를 따라 도는 빛 (S 심볼의 빛과 같은 언어) + 마우스 방향 기울기 ===== */
+@property --beam { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.biz-card::after, .pf-shot::after {
+  content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  border-radius: inherit; padding: 1.5px;
+  background: conic-gradient(from var(--beam), transparent 0 240deg, rgba(0,180,198,.15) 280deg, #00B4C6 335deg, #CFFAFE 352deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .35s ease;
+}
+@keyframes beamSpin { to { --beam: 360deg; } }
+@keyframes beamOut { to { opacity: 0; } }
+@media (hover: hover) {
+  .biz-card:hover::after, a.pf-shot:hover::after { opacity: 1; animation: beamSpin 2.6s linear infinite; }
+  #business .biz-card:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-4px); }
+  #portfolio a.pf-shot:hover { transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-2px); }
+}
+/* 터치 기기: 카드가 화면 가운데에 오면 빛이 한 바퀴 돌고 사라짐 */
+@media (hover: none) {
+  .biz-card.beam-on::after, .pf-shot.beam-on::after { opacity: 1; animation: beamSpin 2.4s linear forwards, beamOut .5s ease 2.2s forwards; }
+}
+
 .hero-glow {
   position: absolute; top: -200px; right: -100px;
   width: 700px; height: 700px;
@@ -595,8 +638,8 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
   <div class="container hero-content">
     <div class="hero-badge"><span data-ko>씨앤어스 · SeaNus</span><span data-en>SeaNus · 씨앤어스</span></div>
     <h1 class="hero-title">
-      <span data-ko>넓은 바다,<br><span class="accent">함께 성장</span>하는<br><span class="line2">당신의 동행</span></span>
-      <span data-en>The open sea,<br><span class="accent">growing together</span><br><span class="line2">your companion</span></span>
+      <span data-ko><span class="ln"><span>넓은 바다,</span></span><span class="ln"><span><span class="accent">함께 성장</span>하는</span></span><span class="ln"><span class="line2">당신의 동행</span></span></span>
+      <span data-en><span class="ln"><span>The open sea,</span></span><span class="ln"><span class="accent">growing together</span></span><span class="ln"><span class="line2">your companion</span></span></span>
     </h1>
     <p class="hero-sub" data-ko>웹 개발부터 연구개발 컨설팅, 국제 표준화, 온택트 이벤트까지 — 고객 맞춤형 솔루션으로 비즈니스 성장을 지원합니다.</p>
     <p class="hero-sub" data-en>From web development and R&D consulting to international standardization and untact events — we deliver customized solutions that drive your business forward.</p>
@@ -1142,6 +1185,33 @@ function closeDrawer() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W, H, raf, last = 0;
   const t0 = performance.now();
+  // 포인터 언덕(PC 마우스) + 잔물결(클릭·터치)
+  const P = { x: 0, y: 0, tx: 0, ty: 0, amp: 0, tamp: 0 };
+  let ripples = [];
+  const hero = document.getElementById('hero');
+  const local = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  hero.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    [P.tx, P.ty] = local(e);
+    if (P.amp < 0.01) { P.x = P.tx; P.y = P.ty; }
+    P.tamp = 1; wake();
+  });
+  hero.addEventListener('pointerleave', () => { P.tamp = 0; });
+  hero.addEventListener('pointerdown', e => {
+    const [x, y] = local(e);
+    ripples.push({ x, y, t: performance.now() });
+    if (ripples.length > 4) ripples.shift();
+    wake();
+  });
+  function bump(x, y, now) {
+    let s = 0;
+    if (P.amp > 0.01) { const dx = x - P.x, dy = y - P.y; s += P.amp * 1.1 * Math.exp(-(dx * dx + dy * dy) / 22500); }
+    for (const r of ripples) {
+      const age = Math.max(0, now - r.t) / 1000, d = Math.hypot(x - r.x, y - r.y) - age * 240;
+      s += 1.7 * Math.exp(-age * 1.1) * Math.exp(-d * d / 4900);
+    }
+    return s;
+  }
 
   function field(x, y, t) {
     return Math.sin(x * 0.0042 + 1.3 + t * 0.07) * Math.cos(y * 0.0051 - t * 0.05) +
@@ -1157,11 +1227,27 @@ function closeDrawer() {
   }
 
   // marching squares로 등심선을 그림
-  function render(t) {
+  function render(t, now = performance.now()) {
     ctx.clearRect(0, 0, W, H);
+    ripples = ripples.filter(r => now - r.t < 3200);
+    // 밝게 덧칠할 영역: 커서 주변 원 + 퍼져 나가는 잔물결 고리
+    const glows = [];
+    if (P.amp > 0.02) {
+      const g = ctx.createRadialGradient(P.x, P.y, 0, P.x, P.y, 260);
+      g.addColorStop(0, `rgba(170,245,255,${(0.6 * P.amp).toFixed(3)})`); g.addColorStop(1, 'rgba(0,180,198,0)');
+      glows.push(g);
+    }
+    for (const r of ripples) {
+      const age = Math.max(0, now - r.t) / 1000, rad = age * 240, R = rad + 90, a = 0.75 * Math.exp(-age * 1.1);
+      const g = ctx.createRadialGradient(r.x, r.y, 0, r.x, r.y, R);
+      g.addColorStop(Math.max(0, (rad - 90) / R), 'rgba(170,245,255,0)');
+      g.addColorStop(rad / R, `rgba(170,245,255,${a.toFixed(3)})`);
+      g.addColorStop(1, 'rgba(170,245,255,0)');
+      glows.push(g);
+    }
     const step = 16, cols = Math.ceil(W / step) + 1, rows = Math.ceil(H / step) + 1;
     const v = [];
-    for (let j = 0; j < rows; j++) { v[j] = new Float32Array(cols); for (let i = 0; i < cols; i++) v[j][i] = field(i * step, j * step, t); }
+    for (let j = 0; j < rows; j++) { v[j] = new Float32Array(cols); for (let i = 0; i < cols; i++) v[j][i] = field(i * step, j * step, t) + bump(i * step, j * step, now); }
     [-1.2, -0.8, -0.4, 0, 0.4, 0.8, 1.2].forEach((lv, k) => {
       ctx.strokeStyle = k % 3 === 0 ? 'rgba(0,180,198,0.16)' : 'rgba(0,180,198,0.08)';
       ctx.lineWidth = 1;
@@ -1178,27 +1264,54 @@ function closeDrawer() {
         if (pts.length === 4) { ctx.moveTo(pts[2][0], pts[2][1]); ctx.lineTo(pts[3][0], pts[3][1]); }
       }
       ctx.stroke();
+      glows.forEach(g => { ctx.strokeStyle = g; ctx.stroke(); });   // 커서·잔물결 주변 선만 밝게
     });
   }
 
+  // 움직임 줄이기 설정이면 등고선 흐름은 멈추고, 사용자가 직접 움직인 반응만 그림
+  const tOf = now => reduce ? 0 : (now - t0) / 1000;
+  const busy = () => P.amp > 0.01 || P.tamp > 0 || ripples.length > 0;
+  let visible = false, idle = true;
   function loop(now) {
+    if (reduce && !busy()) { idle = true; render(0, now); return; }
     raf = requestAnimationFrame(loop);
-    if (now - last < 40) return;   // 약 25fps면 충분 (느린 움직임)
+    if (now - last < 33) return;   // 약 30fps
     last = now;
-    render((now - t0) / 1000);
+    P.x += (P.tx - P.x) * 0.18; P.y += (P.ty - P.y) * 0.18;
+    P.amp += (P.tamp - P.amp) * 0.08;
+    render(tOf(now), now);
   }
+  function wake() { if (visible && idle) { idle = false; raf = requestAnimationFrame(loop); } }
 
   resize();
   render(0);
   let rt;
-  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { resize(); render((performance.now() - t0) / 1000); }, 150); });
-  if (reduce) return;
-  // 히어로가 화면 밖이거나 탭이 숨겨지면 정지
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { resize(); render(tOf(performance.now())); }, 150); });
+  // 히어로가 화면 밖이면 정지
   new IntersectionObserver(([e]) => {
-    cancelAnimationFrame(raf);
-    if (e.isIntersecting) raf = requestAnimationFrame(loop);
+    cancelAnimationFrame(raf); idle = true;
+    visible = e.isIntersecting;
+    if (visible && !reduce) wake();
   }).observe(cv);
 })();
+
+/* ===== CARD TILT (PC) + BEAM ON CENTER (터치) ===== */
+if (window.matchMedia('(hover: hover)').matches) {
+  document.querySelectorAll('.biz-card, a.pf-shot').forEach(el => {
+    const max = el.classList.contains('biz-card') ? 4 : 2.5;
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 2 * max).toFixed(2) + 'deg');
+      el.style.setProperty('--rx', (-((e.clientY - r.top) / r.height - 0.5) * 2 * max).toFixed(2) + 'deg');
+    });
+    el.addEventListener('mouseleave', () => { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); });
+  });
+} else {
+  const beamObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => e.target.classList.toggle('beam-on', e.isIntersecting));
+  }, { rootMargin: '-35% 0px -35% 0px' });
+  document.querySelectorAll('.biz-card, .pf-shot').forEach(el => beamObserver.observe(el));
+}
 
 /* ===== HERO MARK PARALLAX (마우스 반대 방향으로 살짝 이동, PC만) ===== */
 (function () {
