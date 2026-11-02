@@ -417,6 +417,10 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
   font-size: 12px; font-weight: 800; border-radius: 8px;
   transition: all var(--trans);
 }
+.form-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.form-status { margin-top: 14px; font-size: 11px; line-height: 1.6; min-height: 1.6em; }
+.form-status.ok { color: var(--teal); }
+.form-status.err { color: #F87171; }
 .form-submit:hover { background: var(--teal-lt); transform: translateY(-1px); }
 
 /* ===== FOOTER ===== */
@@ -974,6 +978,8 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
       </div>
       <div class="contact-form reveal reveal-delay-2">
         <form onsubmit="handleSubmit(event)">
+          <input type="text" name="website" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <input type="hidden" name="t" id="formLoadedAt">
           <div class="form-row">
             <div class="form-group">
               <label data-ko>이름 *</label>
@@ -1020,6 +1026,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
             <span data-ko>문의 보내기</span>
             <span data-en>Send Inquiry</span>
           </button>
+          <p class="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </div>
@@ -1160,21 +1167,48 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 /* ===== CONTACT FORM ===== */
-function handleSubmit(e) {
+document.getElementById('formLoadedAt').value = Date.now();
+// [data-ko]가 화면에 보이면 국문 모드
+const isKo = () => {
+  const el = document.querySelector('[data-ko]');
+  return !!el && getComputedStyle(el).display !== 'none';
+};
+const FORM_MSG = {
+  sending: ['전송 중...', 'Sending...'],
+  ok:      ['문의가 접수되었습니다. 빠른 시일 내 연락드리겠습니다.', 'Thank you! We will contact you soon.'],
+  invalid: ['이름, 이메일, 문의 내용을 다시 확인해 주세요.', 'Please check your name, email and message.'],
+  error:   ['전송에 실패했습니다. 잠시 후 다시 시도하시거나 전화로 문의해 주세요.', 'Sending failed. Please try again later or contact us by phone.'],
+};
+const msg = key => FORM_MSG[key][isKo() ? 0 : 1];
+
+async function handleSubmit(e) {
   e.preventDefault();
-  const btn = e.target.querySelector('.form-submit');
-  btn.textContent = currentLang === 'ko' ? '전송 중...' : 'Sending...';
+  const form = e.target;
+  const btn = form.querySelector('.form-submit');
+  const status = form.querySelector('.form-status');
+  const label = btn.innerHTML;
   btn.disabled = true;
-  setTimeout(() => {
-    btn.textContent = currentLang === 'ko' ? '감사합니다! 빠른 시일 내 연락드리겠습니다.' : 'Thank you! We will contact you soon.';
-    e.target.reset();
-    setTimeout(() => {
-      btn.innerHTML = currentLang === 'ko'
-        ? '<span data-ko>문의 보내기</span><span data-en style="display:none">Send Inquiry</span>'
-        : '<span data-ko style="display:none">문의 보내기</span><span data-en>Send Inquiry</span>';
-      btn.disabled = false;
-    }, 4000);
-  }, 1200);
+  btn.textContent = msg('sending');
+  status.className = 'form-status';
+  status.textContent = '';
+  try {
+    const res = await fetch('contact.php', { method: 'POST', body: new FormData(form) });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.ok) {
+      status.classList.add('ok');
+      status.textContent = msg('ok');
+      form.reset();
+      document.getElementById('formLoadedAt').value = Date.now();
+    } else {
+      status.classList.add('err');
+      status.textContent = msg(data.code === 'invalid' ? 'invalid' : 'error');
+    }
+  } catch (err) {
+    status.classList.add('err');
+    status.textContent = msg('error');
+  }
+  btn.innerHTML = label;
+  btn.disabled = false;
 }
 </script>
 </body>
