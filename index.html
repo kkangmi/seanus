@@ -137,9 +137,13 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .hero-mark {
   position: absolute; z-index: 1; pointer-events: none;
   top: 50%; right: max(-60px, calc((100vw - 1160px) / 2 - 120px));
-  height: min(74vh, 680px); width: auto; transform: translateY(-46%);
+  height: min(74vh, 680px); width: auto;
+  transform: translate3d(var(--mx, 0px), calc(-46% + var(--my, 0px)), 0);
   color: rgba(0,180,198,0.34);
 }
+/* 처음 한 번 그려지는 효과는 짧은 1회성이라 움직임 줄이기 설정과 무관하게 적용 */
+.hero-mark path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: markDraw 2.2s cubic-bezier(.65,0,.35,1) .2s forwards; }
+@keyframes markDraw { to { stroke-dashoffset: 0; } }
 .hero-glow {
   position: absolute; top: -200px; right: -100px;
   width: 700px; height: 700px;
@@ -330,7 +334,14 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     radial-gradient(circle at 26px 11px, #CBD5E1 3px, transparent 3.5px),
     radial-gradient(circle at 38px 11px, #CBD5E1 3px, transparent 3.5px);
 }
-.pf-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.pf-shot img {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 0;
+  transition: object-position 1.2s cubic-bezier(.4,0,.2,1);
+}
+/* 마우스를 올리면 사이트 전체 화면이 천천히 스크롤 (속도는 페이지 길이에 비례, JS에서 --pf-dur 지정) */
+@media (hover: hover) {
+  .pf-shot:hover img { object-position: 50% 100%; transition-duration: var(--pf-dur, 6s); transition-timing-function: linear; }
+}
 a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0,.08); }
 .pf-phone {
   position: absolute; right: 0; bottom: 0; width: 24%;
@@ -553,7 +564,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 <!-- HERO -->
 <section id="hero">
   <canvas id="heroChart" aria-hidden="true"></canvas>
-  <svg class="hero-mark" viewBox="0 0 111.00 134.00" fill="none" aria-hidden="true"><path d="M55.75,96.77 L52.75,96.12 L7.62,62.04 L4.00,58.43 L4.00,51.45 L31.73,14.75 L36.62,9.84 L45.48,4.00 L62.46,4.00 L69.75,8.45 L99.25,30.84 L101.83,34.38 L99.38,39.82 L95.46,43.88 L92.00,45.73 L88.50,45.86 L85.12,44.42 L62.62,27.43 L58.38,26.02 L51.50,26.02 L43.71,30.88 L30.50,48.05 L27.92,51.75 L28.37,53.50 L65.45,82.25 L65.62,84.25 L63.38,87.82 L55.75,96.77 Z M62.38,129.88 L49.41,129.88 L43.62,126.74 L9.38,101.56 L8.01,99.12 L12.24,92.12 L16.12,88.51 L19.00,87.94 L23.75,88.49 L47.38,105.59 L53.00,107.77 L56.75,107.79 L60.54,106.50 L69.38,98.82 L82.09,80.38 L44.38,51.50 L44.12,48.98 L46.50,45.05 L52.25,37.69 L54.62,36.37 L58.75,38.45 L102.25,70.84 L106.88,76.69 L105.57,81.38 L103.38,84.82 L76.12,121.15 L67.88,127.31 L62.38,129.88 Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
+  <svg class="hero-mark" viewBox="0 0 111.00 134.00" fill="none" aria-hidden="true"><path d="M55.75,96.77 L52.75,96.12 L7.62,62.04 L4.00,58.43 L4.00,51.45 L31.73,14.75 L36.62,9.84 L45.48,4.00 L62.46,4.00 L69.75,8.45 L99.25,30.84 L101.83,34.38 L99.38,39.82 L95.46,43.88 L92.00,45.73 L88.50,45.86 L85.12,44.42 L62.62,27.43 L58.38,26.02 L51.50,26.02 L43.71,30.88 L30.50,48.05 L27.92,51.75 L28.37,53.50 L65.45,82.25 L65.62,84.25 L63.38,87.82 L55.75,96.77 Z M62.38,129.88 L49.41,129.88 L43.62,126.74 L9.38,101.56 L8.01,99.12 L12.24,92.12 L16.12,88.51 L19.00,87.94 L23.75,88.49 L47.38,105.59 L53.00,107.77 L56.75,107.79 L60.54,106.50 L69.38,98.82 L82.09,80.38 L44.38,51.50 L44.12,48.98 L46.50,45.05 L52.25,37.69 L54.62,36.37 L58.75,38.45 L102.25,70.84 L106.88,76.69 L105.57,81.38 L103.38,84.82 L76.12,121.15 L67.88,127.31 L62.38,129.88 Z" stroke="currentColor" stroke-width="0.32" stroke-linejoin="round" pathLength="1"/></svg>
   <div class="hero-glow"></div>
   <div class="hero-glow-2"></div>
   <div class="container hero-content">
@@ -734,7 +745,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
       <article class="pf-feature reveal">
         <div class="pf-device">
           <a class="pf-shot" href="https://ie-um.kr/" target="_blank" rel="noopener">
-            <img src="assets/images/portfolio/ieum.webp" alt="2026 부울경 광역이음 일자리 박람회 웹사이트" loading="lazy">
+            <img src="assets/images/portfolio/ieum_full.webp" alt="2026 부울경 광역이음 일자리 박람회 웹사이트" loading="lazy">
           </a>
           <div class="pf-phone"><img src="assets/images/portfolio/ieum_m.webp" alt="2026 부울경 광역이음 일자리 박람회 웹사이트 모바일 화면" loading="lazy"></div>
         </div>
@@ -752,7 +763,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
       <article class="pf-feature reveal reveal-delay-1">
         <div class="pf-device">
           <a class="pf-shot" href="https://gorckorea.org/" target="_blank" rel="noopener">
-            <img src="assets/images/portfolio/gorc.webp" alt="GORC 글로벌오션레짐콘퍼런스 웹사이트" loading="lazy">
+            <img src="assets/images/portfolio/gorc_full.webp" alt="GORC 글로벌오션레짐콘퍼런스 웹사이트" loading="lazy">
           </a>
           <div class="pf-phone"><img src="assets/images/portfolio/gorc_m.webp" alt="GORC 글로벌오션레짐콘퍼런스 웹사이트 모바일 화면" loading="lazy"></div>
         </div>
@@ -770,7 +781,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
     <div class="pf-grid">
       <article class="pf-item reveal">
         <a class="pf-shot" href="https://www.icmass-conf.org/" target="_blank" rel="noopener">
-          <img src="assets/images/portfolio/icmass.webp" alt="ICMASS 2027 KOREA 웹사이트" loading="lazy">
+          <img src="assets/images/portfolio/icmass_full.webp" alt="ICMASS 2027 KOREA 웹사이트" loading="lazy">
         </a>
         <div class="pf-meta"><span data-ko>국제 학술대회</span><span data-en>Intl. Conference</span></div>
         <h4>ICMASS 2027 KOREA</h4>
@@ -781,7 +792,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
       <article class="pf-item reveal reveal-delay-1">
         <a class="pf-shot" href="https://xn--b02b03xgtaw6l.kr/dadaepo/" target="_blank" rel="noopener">
-          <img src="assets/images/portfolio/dadaepo.webp" alt="2026 다대포 맥주축제 웹사이트" loading="lazy">
+          <img src="assets/images/portfolio/dadaepo_full.webp" alt="2026 다대포 맥주축제 웹사이트" loading="lazy">
         </a>
         <div class="pf-meta"><span data-ko>지역 축제</span><span data-en>Festival</span></div>
         <h4 data-ko>2026 다대포 맥주축제</h4>
@@ -793,7 +804,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
       <article class="pf-item reveal reveal-delay-2">
         <a class="pf-shot" href="http://mombusan.org/" target="_blank" rel="noopener">
-          <img src="assets/images/portfolio/mombusan.webp" alt="맘편한부산 임신·출산·육아 의료정보박람회 웹사이트" loading="lazy">
+          <img src="assets/images/portfolio/mombusan_full.webp" alt="맘편한부산 임신·출산·육아 의료정보박람회 웹사이트" loading="lazy">
         </a>
         <div class="pf-meta"><span data-ko>박람회</span><span data-en>Expo</span></div>
         <h4 data-ko>맘편한부산</h4>
@@ -805,7 +816,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
       <article class="pf-item reveal">
         <a class="pf-shot" href="http://cnpkorea.dothome.co.kr/" target="_blank" rel="noopener">
-          <img src="assets/images/portfolio/yeosu.webp" alt="여수해양 방문신청 시스템" loading="lazy">
+          <img src="assets/images/portfolio/yeosu_full.webp" alt="여수해양 방문신청 시스템" loading="lazy">
         </a>
         <div class="pf-meta"><span data-ko>웹 시스템</span><span data-en>Web System</span></div>
         <h4 data-ko>여수해양 방문신청 시스템</h4>
@@ -817,7 +828,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
       <article class="pf-item reveal">
         <div class="pf-shot">
-          <img src="assets/images/portfolio/hanha.webp" alt="HBS 한아방송 기업 홈페이지" loading="lazy">
+          <img src="assets/images/portfolio/hanha_full.webp" alt="HBS 한아방송 기업 홈페이지" loading="lazy">
         </div>
         <div class="pf-meta"><span data-ko>기업 홈페이지</span><span data-en>Corporate</span></div>
         <h4 data-ko>HBS 한아방송</h4>
@@ -829,7 +840,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
       <article class="pf-item reveal reveal-delay-1">
         <a class="pf-shot" href="http://cp-korea.com/" target="_blank" rel="noopener">
-          <img src="assets/images/portfolio/cpkorea.webp" alt="C&amp;P Korea 기업 홈페이지" loading="lazy">
+          <img src="assets/images/portfolio/cpkorea_full.webp" alt="C&amp;P Korea 기업 홈페이지" loading="lazy">
         </a>
         <div class="pf-meta"><span data-ko>기업 홈페이지</span><span data-en>Corporate</span></div>
         <h4>C&amp;P Korea</h4>
@@ -840,7 +851,7 @@ a.pf-shot:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0
 
       <article class="pf-item reveal reveal-delay-2">
         <div class="pf-shot">
-          <img src="assets/images/portfolio/marincore.webp" alt="Marine Core 기업 홈페이지" loading="lazy">
+          <img src="assets/images/portfolio/marincore_full.webp" alt="Marine Core 기업 홈페이지" loading="lazy">
         </div>
         <div class="pf-meta"><span data-ko>기업 홈페이지</span><span data-en>Corporate</span></div>
         <h4>Marine Core</h4>
@@ -1098,27 +1109,34 @@ function closeDrawer() {
   drawer.classList.remove('open');
 }
 
-/* ===== HERO CHART BACKGROUND (등심선) ===== */
+/* ===== HERO CHART BACKGROUND (천천히 흐르는 등심선) ===== */
 (function () {
   const cv = document.getElementById('heroChart');
   if (!cv) return;
   const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, raf, last = 0;
+  const t0 = performance.now();
 
-  function field(x, y) {
-    return Math.sin(x * 0.0042 + 1.3) * Math.cos(y * 0.0051) +
-           0.6 * Math.sin((x + y) * 0.0027 + 0.7) +
-           0.35 * Math.cos(x * 0.0093 - y * 0.0061 + 2.1);
+  function field(x, y, t) {
+    return Math.sin(x * 0.0042 + 1.3 + t * 0.07) * Math.cos(y * 0.0051 - t * 0.05) +
+           0.6 * Math.sin((x + y) * 0.0027 + 0.7 + t * 0.04) +
+           0.35 * Math.cos(x * 0.0093 - y * 0.0061 + 2.1 - t * 0.06);
   }
 
-  // marching squares로 등심선을 그림 (리사이즈 시에만 다시 그림)
-  function draw() {
+  function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const W = cv.clientWidth, H = cv.clientHeight;
+    W = cv.clientWidth; H = cv.clientHeight;
     cv.width = W * dpr; cv.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const step = 14, cols = Math.ceil(W / step) + 1, rows = Math.ceil(H / step) + 1;
+  }
+
+  // marching squares로 등심선을 그림
+  function render(t) {
+    ctx.clearRect(0, 0, W, H);
+    const step = 16, cols = Math.ceil(W / step) + 1, rows = Math.ceil(H / step) + 1;
     const v = [];
-    for (let j = 0; j < rows; j++) { v[j] = []; for (let i = 0; i < cols; i++) v[j][i] = field(i * step, j * step); }
+    for (let j = 0; j < rows; j++) { v[j] = new Float32Array(cols); for (let i = 0; i < cols; i++) v[j][i] = field(i * step, j * step, t); }
     [-1.2, -0.8, -0.4, 0, 0.4, 0.8, 1.2].forEach((lv, k) => {
       ctx.strokeStyle = k % 3 === 0 ? 'rgba(0,180,198,0.16)' : 'rgba(0,180,198,0.08)';
       ctx.lineWidth = 1;
@@ -1138,10 +1156,56 @@ function closeDrawer() {
     });
   }
 
-  draw();
+  function loop(now) {
+    raf = requestAnimationFrame(loop);
+    if (now - last < 40) return;   // 약 25fps면 충분 (느린 움직임)
+    last = now;
+    render((now - t0) / 1000);
+  }
+
+  resize();
+  render(0);
   let rt;
-  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(draw, 150); });
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { resize(); render((performance.now() - t0) / 1000); }, 150); });
+  if (reduce) return;
+  // 히어로가 화면 밖이거나 탭이 숨겨지면 정지
+  new IntersectionObserver(([e]) => {
+    cancelAnimationFrame(raf);
+    if (e.isIntersecting) raf = requestAnimationFrame(loop);
+  }).observe(cv);
 })();
+
+/* ===== HERO MARK PARALLAX (마우스 반대 방향으로 살짝 이동, PC만) ===== */
+(function () {
+  const mark = document.querySelector('.hero-mark');
+  const hero = document.getElementById('hero');
+  if (!mark || !hero) return;
+  if (!window.matchMedia('(hover: hover)').matches) return;   // 마우스 조작에 반응하는 효과라 PC에서만
+  let tx = 0, ty = 0, x = 0, y = 0, raf = null;
+  function tick() {
+    x += (tx - x) * 0.06; y += (ty - y) * 0.06;
+    mark.style.setProperty('--mx', x.toFixed(2) + 'px');
+    mark.style.setProperty('--my', y.toFixed(2) + 'px');
+    raf = (Math.abs(tx - x) > 0.05 || Math.abs(ty - y) > 0.05) ? requestAnimationFrame(tick) : null;
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+  hero.addEventListener('mousemove', e => {
+    const r = hero.getBoundingClientRect();
+    tx = -((e.clientX - r.left) / r.width - 0.5) * 28;
+    ty = -((e.clientY - r.top) / r.height - 0.5) * 20;
+    kick();
+  });
+  hero.addEventListener('mouseleave', () => { tx = 0; ty = 0; kick(); });
+})();
+
+/* ===== PORTFOLIO HOVER SCROLL SPEED (긴 페이지일수록 천천히) ===== */
+document.querySelectorAll('.pf-shot img').forEach(img => {
+  const set = () => {
+    const ratio = img.naturalHeight / img.naturalWidth;          // 1 이하면 거의 스크롤 없음
+    img.style.setProperty('--pf-dur', Math.min(10, Math.max(2.5, ratio * 2.4)).toFixed(1) + 's');
+  };
+  img.complete && img.naturalWidth ? set() : img.addEventListener('load', set, { once: true });
+});
 
 /* ===== SCROLL REVEAL ===== */
 const revealEls = document.querySelectorAll('.reveal');
